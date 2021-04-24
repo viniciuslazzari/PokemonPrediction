@@ -25,4 +25,11 @@ data = pd.read_csv('./data.csv')
 data = filterData(data)
 data = normalizeData(data)
 
-print(data)
+x = data.loc[:, data.columns != 'Legendary']
+x.insert(0, 'coefficient', np.ones(len(data.index)))
+y = data['Legendary']
+theta = np.zeros(len(x.columns))
+
+x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.3, random_state=0)
+
+print(x_test)
