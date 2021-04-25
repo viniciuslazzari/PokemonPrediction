@@ -21,9 +21,14 @@ def normalizeData(data):
 	return data
 
 def sigmoid(x, theta):
-	sigma = 1 / (1 + np.exp(-(np.sum(x_train * theta, 1))))
+	sigma = 1 / (1 + np.exp(- np.sum(x_train * theta, 1)))
 
 	return sigma
+
+def cost(y_pred, y):
+	cost = - np.sum((y * np.log(y_pred)) + ((1 - y) * (np.log(1 - y_pred)))) / (len(y_pred))
+
+	return cost
 
 data = pd.read_csv('./data.csv')
 
@@ -33,7 +38,7 @@ data = normalizeData(data)
 x = data.loc[:, data.columns != 'Legendary']
 x.insert(0, 'coefficient', np.ones(len(data.index)))
 y = data['Legendary']
-theta = np.zeros(len(x.columns))
+theta = np.ones(len(x.columns))
 
 x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.3, random_state=0)
 
@@ -44,5 +49,6 @@ y_test = np.array(y_test)
 theta = np.array(theta).T
 
 sigma = sigmoid(x_train, theta)
+cost = cost(sigma, y_train)
 
-print(sigma)
+print(cost)
