@@ -3,50 +3,64 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
 
+
 def filterData(data):
-	legendary = {False: 0, True: 1}
+    legendary = {False: 0, True: 1}
 
-	data = data[['Type 1', 'Type 2', 'HP', 'Attack', 'Defense', 'Sp. Atk', 'Sp. Def', 'Speed', 'Legendary']]
-	data = pd.get_dummies(data, columns=['Type 1', 'Type 2'], prefix=['type1', 'type2'])
-	data['Legendary'] = [legendary[item] for item in data['Legendary']]
+    data = data[['Type 1', 'HP', 'Attack', 'Defense', 'Sp. Atk', 'Sp. Def', 'Speed', 'Legendary']]
+    data = pd.get_dummies(data, columns=['Type 1'], prefix=['type1'])
+    data['Legendary'] = [legendary[item] for item in data['Legendary']]
 
-	return data
+    return data
+
 
 def normalizeData(data):
-	for feature in data.columns:
-		maxValue = data[feature].max()
-		minValue = data[feature].min()
-		data[feature] = (data[feature] - minValue) / (maxValue - minValue)
+    for feature in data.columns:
+        maxValue = data[feature].max()
+        minValue = data[feature].min()
+        data[feature] = (data[feature] - minValue) / (maxValue - minValue)
 
-	return data
+    return data
+
 
 def sigmoidFunction(x, theta):
-	sigma = 1 / (1 + np.exp(- np.sum(x_train * theta, 1)))
+    sigma = 1 / (1 + np.exp(- np.sum(x * theta, 1)))
 
-	return sigma
+    return sigma
+
 
 def costFunction(y_pred, y):
-	cost = - np.sum((y * np.log(y_pred)) + ((1 - y) * (np.log(1 - y_pred)))) / (len(y_pred))
+    cost = - np.sum((y * np.log(y_pred)) + ((1 - y) * (np.log(1 - y_pred)))) / (len(y_pred))
 
-	return cost
+    return cost
+
 
 def gradientDescent(x, y, theta, alpha, iters):
-	cost = []
+    cost = []
 
-	for iter in range(iters):
-		y_pred = sigmoidFunction(x, theta)
-		loss = y_pred - y
-		for j in range(len(theta)):
-			gradient = 0
-			for m in range(len(x)):
-				gradient += loss[m] * x[m][j]
-			theta[j] -= (alpha/len(x)) * gradient
-		
-		print(costFunction(y_pred, y))
-		cost.append(costFunction(y_pred, y))
+    for iter in range(iters):
+        y_pred = sigmoidFunction(x, theta)
+        loss = y_pred - y
+        for j in range(len(theta)):
+            gradient = 0
+            for m in range(len(x)):
+                gradient += loss[m] * x[m][j]
+            theta[j] -= (alpha/len(x)) * gradient
 
-	return theta, cost
+        print(costFunction(y_pred, y))
+        cost.append(costFunction(y_pred, y))
 
+    return theta, cost
+
+
+def testModel(x, y, theta):
+    y_pred = sigmoidFunction(x, theta)
+    df = {'y_pred': y_pred, 'y': y}
+    df = pd.DataFrame(df)
+    df['y_pred'] = [round(item) for item in df['y_pred']]
+    result = pd.concat([pd.DataFrame(x), df], axis=1)
+
+    return result
 
 
 data = pd.read_csv('./data.csv')
@@ -67,7 +81,14 @@ x_test = np.array(x_test)
 y_test = np.array(y_test)
 theta = np.array(theta).T
 
-alpha = 0.003
-iters = 5000
+alpha = 30
+iters = 1000
 
 theta, cost = gradientDescent(x_train, y_train, theta, alpha, iters)
+
+plt.plot(list(range(iters)), cost, '-r')
+plt.xlabel("Number of iterations")
+plt.ylabel("Cost")
+plt.show()
+
+test = testModel(x_test, y_test, theta)
