@@ -20,15 +20,34 @@ def normalizeData(data):
 
 	return data
 
-def sigmoid(x, theta):
+def sigmoidFunction(x, theta):
 	sigma = 1 / (1 + np.exp(- np.sum(x_train * theta, 1)))
 
 	return sigma
 
-def cost(y_pred, y):
+def costFunction(y_pred, y):
 	cost = - np.sum((y * np.log(y_pred)) + ((1 - y) * (np.log(1 - y_pred)))) / (len(y_pred))
 
 	return cost
+
+def gradientDescent(x, y, theta, alpha, iters):
+	cost = []
+
+	for iter in range(iters):
+		y_pred = sigmoidFunction(x, theta)
+		loss = y_pred - y
+		for j in range(len(theta)):
+			gradient = 0
+			for m in range(len(x)):
+				gradient += loss[m] * x[m][j]
+			theta[j] -= (alpha/len(x)) * gradient
+		
+		print(costFunction(y_pred, y))
+		cost.append(costFunction(y_pred, y))
+
+	return theta, cost
+
+
 
 data = pd.read_csv('./data.csv')
 
@@ -48,7 +67,7 @@ x_test = np.array(x_test)
 y_test = np.array(y_test)
 theta = np.array(theta).T
 
-sigma = sigmoid(x_train, theta)
-cost = cost(sigma, y_train)
+alpha = 0.003
+iters = 5000
 
-print(cost)
+theta, cost = gradientDescent(x_train, y_train, theta, alpha, iters)
