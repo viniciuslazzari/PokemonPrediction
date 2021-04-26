@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score
 
 
 def filterData(data):
@@ -60,7 +61,7 @@ def testModel(x, y, theta):
     df['y_pred'] = [round(item) for item in df['y_pred']]
     result = pd.concat([pd.DataFrame(x), df], axis=1)
 
-    return result
+    return df
 
 
 data = pd.read_csv('./data.csv')
@@ -81,8 +82,8 @@ x_test = np.array(x_test)
 y_test = np.array(y_test)
 theta = np.array(theta).T
 
-alpha = 30
-iters = 1000
+alpha = 0.003
+iters = 10000
 
 theta, cost = gradientDescent(x_train, y_train, theta, alpha, iters)
 
@@ -92,3 +93,5 @@ plt.ylabel("Cost")
 plt.show()
 
 test = testModel(x_test, y_test, theta)
+score = accuracy_score(test['y'], test['y_pred'])
+print(score)
