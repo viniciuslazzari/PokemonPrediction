@@ -29,7 +29,17 @@ And know the data is ready to be used, it just needs to be separated between the
 
 ## Model training 🔄
 
+The cost function for logistic regression is very different than those of linear regression, in fact, there are two cost functions, one when `y = 0` and one when `y = 1`. They could be joined together to get the general cost function:
 
+<img src="https://www.baeldung.com/wp-content/ql-cache/quicklatex.com-91ede8271c1696055f1ed51e65ff05f2_l3.svg">
+
+For every iteration, the cost function is calculated and should be minimized ultil convergence, a state where almost nothing changes anymore. To minimize the function, the model uses the derivative of **gradient descent** for each `theta` parameter, and update all of them simultaneously.
+
+<img src="https://render.githubusercontent.com/render/math?math=\displaystyle \theta_j := \theta_j - \frac{1}{m} \alpha \sum_{i=1}^m (h_\theta(x^{(i)}) - y^{(i)}) x^{(i)}_j">
+
+This way, if everything is working and a good learning rate `α` is chosen, the **cost** should decrease in every iteration, improving the model accuracy.
+
+<img src="https://i.postimg.cc/N0QJfcYn/cost.png">
 
 ## Technologies 💻
 
