@@ -49,6 +49,11 @@ The test of the model was made using the dataset that was initially separated fr
 
 Training the algorithm with `α = 0.003` and repeating the process until convergence, the overall model accuracy was **92%**.
 
+## How to make predictions 🔮
+
+After the model training, any pokemon can be created and send to the algorithm, that will predict the probability  of him being **Legendary**.
+For this, the only thing that you have to do is to edit the `predictions` file, creating a new line and adding the pokemon stats. The next time you will run the model the pokemon will be printed in terminal, with his probability.
+
 ## Technologies 💻
 
 Build with:
