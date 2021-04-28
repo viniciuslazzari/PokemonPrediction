@@ -29,6 +29,12 @@ And know the data is ready to be used, it just needs to be separated between the
 
 ## Model training 🔄
 
+In logistic regression the output should not be a continuous value, but one that ranges between 0 (False) and 1 (True). Hence, the output is calculated using a the **sigmoid function**, that ensures that the final output will be some value between 0 and 1, no matter how big the theta parameters are.
+
+<img src="https://wikimedia.org/api/rest_v1/media/math/render/svg/e376fe69caee24c914fab1360de36900b7bb9c24">
+
+<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Sigmoid-function-2.svg/1280px-Sigmoid-function-2.svg.png">
+
 The cost function for logistic regression is very different than those of linear regression, in fact, there are two cost functions, one when `y = 0` and one when `y = 1`. They could be joined together to get the general cost function:
 
 <img src="https://www.baeldung.com/wp-content/ql-cache/quicklatex.com-91ede8271c1696055f1ed51e65ff05f2_l3.svg">
@@ -51,8 +57,8 @@ Training the algorithm with `α = 0.003` and repeating the process until converg
 
 ## How to make predictions 🔮
 
-After the model training, any pokemon can be created and send to the algorithm, that will predict the probability  of him being **Legendary**.
-For this, the only thing that you have to do is to edit the `predictions` file, creating a new line and adding the pokemon stats. The next time you will run the model the pokemon will be printed in terminal, with his probability.
+Once the model is trained, any pokemon can be created and send to the algorithm, that will predict the probability of him being **Legendary**.
+The only thing that you have to do is to edit the `predictions` file, creating a new line and adding the pokemon stats. The next time that the algorithm run, the pokemon created will be printed in terminal, along with his probability.
 
 ## Technologies 💻
 
