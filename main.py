@@ -4,15 +4,31 @@ import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
 
+legendary = {False: 0, True: 1}
+pd.set_option("display.max_rows", None, "display.max_columns", None)
+
 
 def filterData(data):
-    legendary = {False: 0, True: 1}
-
     data = data[['Type 1', 'HP', 'Attack', 'Defense', 'Sp. Atk', 'Sp. Def', 'Speed', 'Legendary']]
-    data = pd.get_dummies(data, columns=['Type 1'], prefix=['type1'])
     data['Legendary'] = [legendary[item] for item in data['Legendary']]
+    data = pd.get_dummies(data, columns=['Type 1'], prefix=['type1'])
 
     return data
+
+
+def filterDataRef(ref, data):
+    df = pd.DataFrame()
+
+    data = pd.get_dummies(data, columns=['Type 1'], prefix=['type1'])
+    df['Name'] = data['Name']
+
+    for feature in ref.columns:
+        if feature in data.columns:
+            df[feature] = data[feature]
+        else:
+            df[feature] = np.zeros(len(data))
+
+    return df
 
 
 def normalizeData(data):
@@ -20,6 +36,16 @@ def normalizeData(data):
         maxValue = data[feature].max()
         minValue = data[feature].min()
         data[feature] = (data[feature] - minValue) / (maxValue - minValue)
+
+    return data
+
+
+def normalizeDataRef(ref, data):
+    for feature in ref.columns:
+        if feature in data.columns and feature != 'Name':
+            maxValue = ref[feature].max()
+            minValue = ref[feature].min()
+            data[feature] = (data[feature] - minValue) / (maxValue - minValue)
 
     return data
 
@@ -36,10 +62,11 @@ def costFunction(y_pred, y):
     return cost
 
 
-def gradientDescent(x, y, theta, alpha, iters):
-    cost = []
+def gradientDescent(x, y, theta, alpha):
+    costArray = []
+    convergence = False
 
-    for iter in range(iters):
+    while not convergence:
         y_pred = sigmoidFunction(x, theta)
         loss = y_pred - y
         for j in range(len(theta)):
@@ -48,10 +75,14 @@ def gradientDescent(x, y, theta, alpha, iters):
                 gradient += loss[m] * x[m][j]
             theta[j] -= (alpha/len(x)) * gradient
 
-        print(costFunction(y_pred, y))
-        cost.append(costFunction(y_pred, y))
+        cost = costFunction(y_pred, y)
+        print(cost)
+        costReduction = costArray[-1] - cost if costArray else cost
+        costArray.append(cost)
 
-    return theta, cost
+        convergence = True if costReduction < 0.000000001 else False
+
+    return theta, costArray
 
 
 def testModel(x, y, theta):
@@ -64,10 +95,28 @@ def testModel(x, y, theta):
     return df
 
 
+def predict(pred, theta):
+    names = pred['Name']
+    x = pred.loc[:, pred.columns != 'Name']
+    x = np.array(x)
+    y = sigmoidFunction(x, theta)
+    y = [round(item, 2) for item in y]
+    results = {'Name': names, 'Result': y}
+    results = pd.DataFrame(results)
+
+    return results
+
+
 data = pd.read_csv('./data.csv')
+pred = pd.read_csv('./predictions.csv')
 
 data = filterData(data)
+pred = normalizeDataRef(data, pred)
 data = normalizeData(data)
+pred = filterDataRef(data, pred)
+
+x_pred = pred.loc[:, pred.columns != 'Legendary']
+x_pred.insert(0, 'coefficient', np.ones(len(x_pred.index)))
 
 x = data.loc[:, data.columns != 'Legendary']
 x.insert(0, 'coefficient', np.ones(len(data.index)))
@@ -82,16 +131,18 @@ x_test = np.array(x_test)
 y_test = np.array(y_test)
 theta = np.array(theta).T
 
-alpha = 0.003
-iters = 10000
+alpha = 15
 
-theta, cost = gradientDescent(x_train, y_train, theta, alpha, iters)
+theta, cost = gradientDescent(x_train, y_train, theta, alpha)
 
-plt.plot(list(range(iters)), cost, '-r')
+plt.plot(list(range(len(cost))), cost, '-r')
 plt.xlabel("Number of iterations")
 plt.ylabel("Cost")
 plt.show()
 
 test = testModel(x_test, y_test, theta)
 score = accuracy_score(test['y'], test['y_pred'])
-print(score)
+print('The overall model accuracy is: ' + str(score))
+
+predictions = predict(x_pred, theta)
+print(predictions)
