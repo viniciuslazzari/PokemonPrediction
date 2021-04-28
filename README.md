@@ -41,6 +41,14 @@ This way, if everything is working and a good learning rate `α` is chosen, the 
 
 <img src="https://i.postimg.cc/N0QJfcYn/cost.png">
 
+## Model testing 📚
+
+The test of the model was made using the dataset that was initially separated from the training set. For the test, the hypothesis of each sample was calculated, based on the `theta` values generated from training. Then, the algorithm calculates the overallmodel accuracy using **sklearn** function `accuracy_score`.
+
+### Results
+
+Training the algorithm with `α = 0.003` and repeating the process until convergence, the overall model accuracy was **92%**.
+
 ## Technologies 💻
 
 Build with:
