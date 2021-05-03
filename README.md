@@ -39,9 +39,16 @@ The cost function for logistic regression is very different than those of linear
 
 <img src="https://www.baeldung.com/wp-content/ql-cache/quicklatex.com-91ede8271c1696055f1ed51e65ff05f2_l3.svg">
 
+This way, the cost increases exponentially, because he derives from the log function, that punishes bigger errors with bigger costs.
+
+<img src="https://miro.medium.com/max/709/1*gAsyT-YdsQZUMF81NTZQdQ.png">
+
+<img src="https://miro.medium.com/max/695/1*2QLAi8r4BWFZ4AC6aQLzbA.png">
+
 For every iteration, the cost function is calculated and should be minimized ultil convergence, a state where almost nothing changes anymore. To minimize the function, the model uses the derivative of **gradient descent** for each `theta` parameter, and update all of them simultaneously.
 
 <img src="https://render.githubusercontent.com/render/math?math=\displaystyle \theta_j := \theta_j - \frac{1}{m} \alpha \sum_{i=1}^m (h_\theta(x^{(i)}) - y^{(i)}) x^{(i)}_j">
+
 
 This way, if everything is working and a good learning rate `α` is chosen, the **cost** should decrease in every iteration, improving the model accuracy.
 
